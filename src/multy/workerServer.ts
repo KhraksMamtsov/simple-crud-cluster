@@ -29,22 +29,19 @@ export function startServer() {
           };
 
           const requestToApi = http.request(options, (response) => {
+            console.log(
+              LOG_PREFIX,
+              "↑",
+              options.method,
+              options.port,
+              options.path
+            );
             response.pipe(res.writeHead(response.statusCode!));
           });
 
           req.pipe(requestToApi).on("error", (err) => {
             console.log(LOG_PREFIX + "Error: " + err.message);
           });
-
-          // requestToApi.end(() =>
-          //   console.log(
-          //     LOG_PREFIX,
-          //     "↑",
-          //     options.method,
-          //     options.port,
-          //     options.path
-          //   )
-          // );
 
           return;
         },

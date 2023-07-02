@@ -11,7 +11,7 @@ const updateUser = v.shape({
   method: v.string("PUT"),
   path: v.tuple([v.string("api"), v.string("users"), v.string()]),
 });
-const updateUserDtoValidator = v.partial({
+const updateUserDtoValidator = v.shape({
   username: v.string(),
   age: v.number(),
   hobbies: v.array(v.string()),

@@ -27,20 +27,18 @@ export function startServer(ports: number[]) {
           };
 
           const request = http.request(options, (response) => {
+            console.log(
+              LOG_PREFIX,
+              "↑",
+              options.method,
+              options.port,
+              options.path
+            );
             response.pipe(res.writeHead(response.statusCode!));
           });
           req.pipe(request).on("error", (err) => {
             console.log(LOG_PREFIX + "Error: " + err.message);
           });
-          // request.end(() =>
-          //   console.log(
-          //     LOG_PREFIX,
-          //     "↑",
-          //     options.method,
-          //     options.port,
-          //     options.path
-          //   )
-          // );
 
           currentIndex = (currentIndex + 1) % ports.length;
 
