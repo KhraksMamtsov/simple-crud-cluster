@@ -1,5 +1,6 @@
 import http from "node:http";
 import cluster from "node:cluster";
+import { internalError } from "./response";
 
 export function start(args: {
   port: number;
@@ -13,8 +14,16 @@ export function start(args: {
   const PREFIX = `${args.name}:${args.port}:${process.pid} `;
   const server = http
     .createServer((req, res) => {
-      console.info(PREFIX, "↓", req.method, req.url);
-      args.handler(req, res, PREFIX);
+      console.log(PREFIX, "↓", req.method, req.url);
+      try {
+        args.handler(req, res, PREFIX);
+      } catch (error) {
+        internalError({
+          error,
+          log_prefix: PREFIX,
+          response: res,
+        });
+      }
     })
     .listen(args.port, () => {
       console.log(PREFIX + `http://localhost:` + args.port);
@@ -25,6 +34,7 @@ export function start(args: {
   });
 
   process
+    .on("uncaughtException", () => {})
     .on("exit", () => {
       console.log(PREFIX + `,`);
       server.close(() => {

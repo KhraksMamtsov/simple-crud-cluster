@@ -1,4 +1,4 @@
-import { badRequest, notFound } from "./response";
+import { badRequest, notFound } from "../server/response";
 import type { DbError } from "../errors";
 import type { ValidationError } from "../errors";
 import type { ServerResponse } from "http";

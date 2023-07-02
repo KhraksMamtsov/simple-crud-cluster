@@ -1,8 +1,8 @@
 import * as http from "http";
-import { getPort } from "./env";
-import { pipe } from "./lib/functions";
-import * as O from "./lib/option";
-import { start } from "./server/server";
+import { getPort } from "../env";
+import { pipe } from "../lib/functions";
+import * as O from "../lib/option";
+import { start } from "../server/server";
 
 export function startServer(ports: number[]) {
   let currentIndex = 0;

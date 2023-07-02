@@ -1,4 +1,4 @@
-import { userController } from "../endpoint";
+import { userController } from "./controller";
 import { getPort } from "../env";
 import { flow, pipe } from "../lib/functions";
 import * as O from "../lib/option";
@@ -6,7 +6,7 @@ import * as E from "../lib/either";
 import * as T from "../lib/task";
 import * as Server from "../server/server";
 import { Db } from "../db/db";
-import { notFound, ok } from "./response";
+import { notFound, json } from "../server/response";
 import { handleError } from "./error";
 
 export function startServer(args: { dbPort?: number }) {
@@ -36,7 +36,7 @@ export function startServer(args: { dbPort?: number }) {
                       response: res,
                       log_prefix: LOG_PREFIX,
                     }),
-                    ok({
+                    json({
                       log_prefix: LOG_PREFIX,
                       response: res,
                     })

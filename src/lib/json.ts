@@ -3,6 +3,7 @@ import * as v from "./validator";
 import { pipe } from "./functions";
 
 export const parse = E.tryCatch((x: string) => JSON.parse(x) as unknown);
+export const stringify = E.tryCatch((x: unknown) => JSON.stringify(x));
 export const parseUnknown = (x: unknown) =>
   pipe(x, E.fromPredicate(v.string()), E.chain(parse));
 

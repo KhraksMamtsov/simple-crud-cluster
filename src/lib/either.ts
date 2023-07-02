@@ -104,3 +104,11 @@ export const tryCatch =
       return left(x);
     }
   };
+
+export const get =
+  <L, L1>(onLeft: (left: L) => L1) =>
+  <R>(either: Either<L, R>) =>
+    pipe(
+      either,
+      match(onLeft, (x) => x)
+    );
