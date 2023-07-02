@@ -18,18 +18,23 @@ export const bindTo =
       task,
       map((p) => ({ [name]: p } as any))
     );
+
+export type Compute<A> = { [K in keyof A]: A[K] } & unknown;
 export const bind =
-  <N extends string, T1>(name: N, next: () => Task<T1>) =>
-  <T extends {}>(prev: Task<T>) =>
+  <const N extends string, T extends {}, T1>(
+    name: N,
+    next: (context: T) => Task<T1>
+  ) =>
+  (prev: Task<T>): Task<Compute<T & Record<N, T1>>> =>
     pipe(
       prev,
       chain((p) =>
         pipe(
-          next(),
+          next(p),
           map((n) => ({
             ...p,
             [name]: n,
-          }))
+          })) as any
         )
       )
     );
@@ -70,3 +75,8 @@ export const sequenceEither = <L, R>(
     E.match((left) => pipe(left, E.left, of), map(E.right))
   );
 };
+
+export const sequenceArray =
+  <T>(array: Array<Task<T>>): Task<Array<T>> =>
+  () =>
+    Promise.all(array.map(run));

@@ -12,6 +12,11 @@ export const map =
   (option: Option<T>): Option<S> =>
     option.tag === "none" ? option : some(fn(option.value));
 
+export const get =
+  <N>(onNone: () => N) =>
+  <S>(option: Option<S>): S | N =>
+    option.tag === "none" ? onNone() : option.value;
+
 export const alt =
   <T1>(fn: () => Option<T1>) =>
   <T>(option: Option<T>): Option<T | T1> =>
