@@ -1,4 +1,4 @@
-import * as crypto from "node:crypto";
+import type * as crypto from "node:crypto";
 
 export interface User {
   readonly id: crypto.UUID;
