@@ -1,22 +1,20 @@
 import type { User } from "../user";
 import type { ServerResponse } from "http";
 
-export const ok = (args: {
-  payload: User | User[];
-  response: ServerResponse;
-  log_prefix: string;
-}) => {
-  const status = 200;
-  const body = JSON.stringify(args.payload, null, 1);
+export const ok =
+  (args: { response: ServerResponse; log_prefix: string }) =>
+  (payload: User | User[]) => {
+    const status = 200;
+    const body = JSON.stringify(payload, null, 1);
 
-  args.response
-    .writeHead(status, {
-      "Content-Type": "application/json",
-    })
-    .end(body, () => {
-      console.log(args.log_prefix, "↑", status, body);
-    });
-};
+    args.response
+      .writeHead(status, {
+        "Content-Type": "application/json",
+      })
+      .end(body, () => {
+        console.log(args.log_prefix, "↑", status, body);
+      });
+  };
 
 export const badRequest = (args: {
   response: ServerResponse;
