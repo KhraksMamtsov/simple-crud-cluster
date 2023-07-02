@@ -15,5 +15,10 @@ export const map =
   (array: ReadonlyArray<A>) =>
     array.map(fn);
 
+export const reduce =
+  <A, A1>(fn: (acc: A1, el: A) => A1, acc: A1) =>
+  (array: ReadonlyArray<A>) =>
+    array.reduce(fn, acc);
+
 export const range = (length: number) =>
   Array.from({ length }).map((_, i) => i);

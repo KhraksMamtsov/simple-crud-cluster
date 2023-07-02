@@ -9,11 +9,12 @@ import { Db } from "../db/db";
 import { notFound, json } from "../server/response";
 import { handleError } from "./error";
 
-export function startServer(args: { dbPort?: number }) {
-  const db = args.dbPort ? new Db() : new Db();
+export function startServer(args?: { port: number }) {
+  const db = new Db();
 
   pipe(
-    getPort(),
+    O.fromUndefinable(args?.port),
+    O.alt(() => getPort("PORT")),
     O.map((port) => {
       Server.start({
         port,

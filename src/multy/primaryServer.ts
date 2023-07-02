@@ -7,7 +7,7 @@ import { start } from "../server/server";
 export function startServer(ports: number[]) {
   let currentIndex = 0;
   pipe(
-    getPort(),
+    getPort("PORT"),
     O.map((port) => {
       start({
         port,
@@ -26,22 +26,21 @@ export function startServer(ports: number[]) {
             headers: req.headers,
           };
 
-          http
-            .request(options, (response) => {
-              response.pipe(res.writeHead(response.statusCode!));
-            })
-            .on("error", (err) => {
-              console.log(LOG_PREFIX + "Error: " + err.message);
-            })
-            .end(() =>
-              console.log(
-                LOG_PREFIX,
-                "↑",
-                options.method,
-                options.port,
-                options.path
-              )
-            );
+          const request = http.request(options, (response) => {
+            response.pipe(res.writeHead(response.statusCode!));
+          });
+          req.pipe(request).on("error", (err) => {
+            console.log(LOG_PREFIX + "Error: " + err.message);
+          });
+          // request.end(() =>
+          //   console.log(
+          //     LOG_PREFIX,
+          //     "↑",
+          //     options.method,
+          //     options.port,
+          //     options.path
+          //   )
+          // );
 
           currentIndex = (currentIndex + 1) % ports.length;
 
