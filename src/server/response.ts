@@ -50,29 +50,27 @@ export const notFound = (args: {
     });
 };
 
-export const internalError = (args: {
-  response: ServerResponse;
-  error: unknown;
-  log_prefix: string;
-}) => {
-  const status = 500;
+export const internalError =
+  (args: { response: ServerResponse; log_prefix: string }) =>
+  (error: unknown) => {
+    const status = 500;
 
-  let message: string;
-  if (args.error instanceof Error) {
-    message = args.error.message;
-  } else {
-    message = pipe(
-      args.error,
-      stringify,
-      E.get(() => "Unknown error.")
-    );
-  }
+    let message: string;
+    if (error instanceof Error) {
+      message = error.message;
+    } else {
+      message = pipe(
+        error,
+        stringify,
+        E.get(() => "Unknown error.")
+      );
+    }
 
-  args.response
-    .writeHead(status, {
-      "Content-Type": "plain/text",
-    })
-    .end(message, () => {
-      console.log(args.log_prefix, "↑", status, message);
-    });
-};
+    args.response
+      .writeHead(status, {
+        "Content-Type": "plain/text",
+      })
+      .end(message, () => {
+        console.log(args.log_prefix, "↑", status, message);
+      });
+  };

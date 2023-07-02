@@ -15,15 +15,19 @@ export function start(args: {
   const server = http
     .createServer((req, res) => {
       console.log(PREFIX, "↓", req.method, req.url);
+      const handleInternalError = internalError({
+        log_prefix: PREFIX,
+        response: res,
+      });
       try {
         args.handler(req, res, PREFIX);
       } catch (error) {
-        internalError({
-          error,
-          log_prefix: PREFIX,
-          response: res,
-        });
+        handleInternalError(error);
       }
+
+      process
+        .on("uncaughtException", handleInternalError)
+        .on("unhandledRejection", handleInternalError);
     })
     .listen(args.port, () => {
       console.log(PREFIX + `http://localhost:` + args.port);
