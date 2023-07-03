@@ -25,7 +25,9 @@ export function startServer(args?: { port: number }) {
             O.match(
               () =>
                 notFound({
-                  error: new Error(`There is no endpoint ${23}`),
+                  error: new Error(
+                    `There is no endpoint ${req.method} ${req.url}`
+                  ),
                   log_prefix: LOG_PREFIX,
                   response: res,
                 }),

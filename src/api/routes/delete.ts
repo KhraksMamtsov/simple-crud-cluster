@@ -16,8 +16,10 @@ export const deleteRoute = routeHandler<User>()(
     return pipe(
       request.path[2],
       E.fromPredicate(v.uuid),
-      E.bimap(ValidationError.of, (uuid) =>
-        pipe(uuid, db.delete, T.map(E.fromOption(() => DbError.of(uuid))))
+      E.bimap(
+        (id) => ValidationError.of(`User id "${id}" is not UUID.`),
+        (uuid) =>
+          pipe(uuid, db.delete, T.map(E.fromOption(() => DbError.of(uuid))))
       ),
       T.sequenceEither,
       T.map(E.flatten)
