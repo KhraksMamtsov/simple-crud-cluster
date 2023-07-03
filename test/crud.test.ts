@@ -4,6 +4,8 @@ import { NIL } from "uuid";
 import { getPort } from "../src/env";
 import { pipe } from "../src/lib/functions";
 import * as O from "../src/lib/option";
+import * as E from "../src/lib/either";
+import * as J from "../src/lib/json";
 
 const port = pipe(
   getPort("TEST_API_PORT"),
@@ -13,6 +15,26 @@ const port = pipe(
 
 const apiUrl = `http://localhost:${port}/api`;
 const apiUsersUrl = apiUrl + "/users";
+
+function streamParser(
+  res: s.Response,
+  callback: (err: Error | null, body: any) => void
+) {
+  res.setEncoding("binary");
+  let body = "";
+  res.on("data", function (chunk) {
+    body += chunk.toString();
+  });
+  res.on("end", function () {
+    callback(
+      null,
+      pipe(
+        J.parseUnknown(body),
+        E.get(() => body)
+      )
+    );
+  });
+}
 
 describe("Simple CRUD", () => {
   const usersApi = s(apiUsersUrl);
@@ -24,12 +46,15 @@ describe("Simple CRUD", () => {
   const { hobbies: _hobbies, ...incompleteTestBody } = testBody;
 
   test("Scenario from assignment", async () => {
-    const getAllResponse = await usersApi.get("");
+    const getAllResponse = await usersApi.get("").parse(streamParser);
 
     expect(getAllResponse.status).toBe(200);
     expect(getAllResponse.body).toStrictEqual([]);
 
-    const createResponse = await usersApi.post("").send(testBody);
+    const createResponse = await usersApi
+      .post("")
+      .send(testBody)
+      .parse(streamParser);
 
     expect(createResponse.status).toBe(200);
     expect(createResponse.body).toStrictEqual({
@@ -37,7 +62,9 @@ describe("Simple CRUD", () => {
       ...testBody,
     });
 
-    const getByIdResponse = await usersApi.get("/" + createResponse.body.id);
+    const getByIdResponse = await usersApi
+      .get("/" + createResponse.body.id)
+      .parse(streamParser);
 
     expect(getByIdResponse.status).toBe(200);
     expect(getByIdResponse.body).toStrictEqual({
@@ -53,7 +80,8 @@ describe("Simple CRUD", () => {
 
     const updateResponse = await usersApi
       .put("/" + createResponse.body.id)
-      .send(newTestBody);
+      .send(newTestBody)
+      .parse(streamParser);
 
     expect(updateResponse.status).toBe(200);
     expect(updateResponse.body).toStrictEqual({
@@ -61,7 +89,9 @@ describe("Simple CRUD", () => {
       ...newTestBody,
     });
 
-    const deleteResponse = await usersApi.delete("/" + createResponse.body.id);
+    const deleteResponse = await usersApi
+      .delete("/" + createResponse.body.id)
+      .parse(streamParser);
 
     expect(deleteResponse.status).toBe(200);
     expect(deleteResponse.body).toStrictEqual({
@@ -69,9 +99,9 @@ describe("Simple CRUD", () => {
       ...newTestBody,
     });
 
-    const getByIdAfterDeleteResponse = await usersApi.get(
-      "/" + createResponse.body.id
-    );
+    const getByIdAfterDeleteResponse = await usersApi
+      .get("/" + createResponse.body.id)
+      .parse(streamParser);
 
     expect(getByIdAfterDeleteResponse.status).toBe(404);
   });
