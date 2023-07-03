@@ -4,6 +4,11 @@ Task: https://github.com/AlreadyBored/nodejs-assignments/blob/main/assignments/c
 
 All tasks done
 
+## NOTES:
+- values of the required fields are checked against the expected types 
+- so any values with right type are valid
+- api approves only EXACT objects - objects with extra fields are considered invalid
+
 ## HOW TO RUN TEST:
 
 You should run test with already started server so:
