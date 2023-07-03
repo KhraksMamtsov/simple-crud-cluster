@@ -9,6 +9,7 @@
     "forceConsistentCasingInFileNames": true,
     "moduleResolution": "node",
     "allowUnusedLabels": false,
+    "verbatimModuleSyntax": true,
     "allowUnreachableCode": false,
     "exactOptionalPropertyTypes": true,
     "noFallthroughCasesInSwitch": true,
@@ -17,8 +18,7 @@
     "noPropertyAccessFromIndexSignature": true,
     "noUncheckedIndexedAccess": true,
     "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "importsNotUsedAsValues": "error"
+    "noUnusedParameters": true
   },
   "exclude": ["node_modules"]
 }
